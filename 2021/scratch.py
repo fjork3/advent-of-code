@@ -185,7 +185,7 @@ def puzzle5() -> int:
 
 
     # part 1: orthogonal only
-    # orthogonal_segments = [segment for segment in line_segments]
+    # orthogonal_segments = [segment for segment in line_segments if segment.is_orthogonal()]
     # covered_points = segments_to_cover(orthogonal_segments)
     # return len([point for point in covered_points if covered_points[point] > 1])
 
@@ -194,4 +194,27 @@ def puzzle5() -> int:
     return len([point for point in covered_points if covered_points[point] > 1])
 
 
-print(f"Day 5: {puzzle5()}")
+# print(f"Day 5: {puzzle5()}")
+
+def puzzle6():
+    def advance_day(fish: dict) -> dict:
+        # each counter decreases by 1
+        # all fish at 0 reset to 6 and spawn a new fish at 8
+        new_fish = {}
+        new_fish[8] = fish[0]
+        for i in range(1, 9):
+            new_fish[i-1] = fish[i]
+        new_fish[6] += fish[0]
+        return new_fish
+
+    with open('input6.txt', 'r') as f:
+        starting_timers = list(map(int, f.readline().split(",")))
+
+    fish = Counter(starting_timers)
+    # num_days = 80 # part 1
+    num_days = 256 # part 2
+    for i in range(num_days):
+        fish = advance_day(fish)
+    return sum(fish[key] for key in fish.keys())
+
+print(f"Day 6: {puzzle6()}")
