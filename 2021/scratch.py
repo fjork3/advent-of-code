@@ -80,4 +80,22 @@ def puzzle3():
 
     return oxygen * co2
 
-print(f"Day 3: {puzzle3()}")
+# print(f"Day 3: {puzzle3()}")
+
+def puzzle4():
+    with open('input3.txt', 'r') as f:
+        called_numbers = f.readline()
+        bingo_squares = []
+        while f.readline():
+            f.
+
+
+    # helper to determine if
+    def is_bingo_square_solved(square: list) -> bool:
+        for row in square:
+            if all([x < 0 for x in row]):
+                return True
+        for col in zip(*square):
+            if all([x < 0 for x in col]):
+                return True
+        return False
