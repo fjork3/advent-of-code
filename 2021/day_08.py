@@ -97,16 +97,6 @@ for display_number, display_pattern in enumerate(signal_patterns):
         print(f"known_digits: {known_digits}")
         print("###############")
 
-    def sweep_for_known_mapping():
-        print(possible_segment_mappings)
-        while possible_segment_mappings:
-            for unknown_seg in possible_segment_mappings:
-                if len(possible_segment_mappings[unknown_seg]) == 1:
-                    output_seg = possible_segment_mappings[unknown_seg].pop()
-                    # print(f"Found unambiguous mapping! {unknown_seg} -> {output_seg}")
-                    add_known_segment_mapping(unknown_seg, output_seg)
-                    break
-
     # we can find some mappings based on segment counts!
     segment_counts = Counter()
     for digit in display_pattern:
@@ -130,7 +120,13 @@ for display_number, display_pattern in enumerate(signal_patterns):
 
     # we now have enough info to unambiguously find all segments!
     # keep sweeping through possible mappings for ones with only 1 possibility remaining
-    sweep_for_known_mapping()
+    while possible_segment_mappings:
+        for unknown_seg in possible_segment_mappings:
+            if len(possible_segment_mappings[unknown_seg]) == 1:
+                output_seg = possible_segment_mappings[unknown_seg].pop()
+                # print(f"Found unambiguous mapping! {unknown_seg} -> {output_seg}")
+                add_known_segment_mapping(unknown_seg, output_seg)
+                break
     # print_debug_state()
 
     # we now have all input -> output segments; figure out what the displayed digits are
