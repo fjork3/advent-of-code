@@ -19,7 +19,7 @@ def puzzle4():
         for j, board in enumerate(bingo_boards):
             bingo_boards[j] = [[-1 if x == num else x for x in row] for row in board]
 
-    with open('inputs/input4.txt', 'r') as f:
+    with open("inputs/input4.txt", "r") as f:
         called_numbers = map(int, f.readline().split(","))
         bingo_boards = []
         while f.readline():
@@ -40,12 +40,14 @@ def puzzle4():
     # Part 2: win last
     for num in called_numbers:
         call_number(num)
-        bingo_boards = [board for board in bingo_boards if score_board(board) < 0] # keep unsolved boards
+        bingo_boards = [
+            board for board in bingo_boards if score_board(board) < 0
+        ]  # keep unsolved boards
         if len(bingo_boards) == 1:
             # finish out the last board, then score it
             next_num = 0
             while score_board(bingo_boards[0]) < 0:
-                next_num = called_numbers.__next__()    # DON'T DO THIS
+                next_num = called_numbers.__next__()  # DON'T DO THIS
                 call_number(next_num)
 
             return score_board(bingo_boards[0]) * next_num

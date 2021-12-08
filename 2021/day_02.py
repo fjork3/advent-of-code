@@ -1,5 +1,5 @@
 def puzzle2() -> int:
-    with open('inputs/input2.txt', 'r') as f:
+    with open("inputs/input2.txt", "r") as f:
         commands = map(lambda x: x.split(" "), f.readlines())
     x_pos = 0
     y_pos = 0

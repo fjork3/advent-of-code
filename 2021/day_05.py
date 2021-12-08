@@ -1,6 +1,7 @@
 from typing import List
 from collections import Counter
 
+
 def puzzle5() -> int:
     class LineSegment:
         def __init__(self, inputline: str):
@@ -27,8 +28,10 @@ def puzzle5() -> int:
             line_length = abs(self.x1 - self.x2)
             x_step_dir = 1 if self.x1 < self.x2 else -1
             y_step_dir = 1 if self.y1 < self.y2 else -1
-            return [(self.x1 + (i * x_step_dir), self.y1 + (i * y_step_dir)) for i in range(line_length + 1)]
-
+            return [
+                (self.x1 + (i * x_step_dir), self.y1 + (i * y_step_dir))
+                for i in range(line_length + 1)
+            ]
 
     def segments_to_cover(segments: List[LineSegment]) -> Counter:
         covered_points = Counter()
@@ -36,10 +39,8 @@ def puzzle5() -> int:
             covered_points.update(segment.covered_points())
         return covered_points
 
-    with open('inputs/input5.txt', 'r') as f:
+    with open("inputs/input5.txt", "r") as f:
         line_segments = [LineSegment(line.rstrip()) for line in f]
-
-
 
     # part 1: orthogonal only
     # orthogonal_segments = [segment for segment in line_segments if segment.is_orthogonal()]
