@@ -22,13 +22,8 @@ def get_neighbors(row: int, col: int):
 
 def is_local_minima(row: int, col: int) -> bool:
     height = board[row][col]
-    for n_row, n_col in [
-        (row, col - 1),
-        (row, col + 1),
-        (row - 1, col),
-        (row + 1, col),
-    ]:
-        if coords_in_board(n_row, n_col) and board[n_row][n_col] <= height:
+    for n_row, n_col in get_neighbors(row, col):
+        if board[n_row][n_col] <= height:
             return False
     return True
 
