@@ -1,5 +1,5 @@
-from typing import Dict
 from collections import Counter
+from typing import Dict
 
 with open("inputs/input8.txt", "r") as f:
     signal_patterns = []
