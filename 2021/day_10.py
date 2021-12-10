@@ -1,4 +1,3 @@
-from math import floor
 from typing import List
 
 with open("inputs/input10.txt", "r") as f:
@@ -51,7 +50,7 @@ def part_two():
         line_scores.append(line_score)
     line_scores.sort()
     # return median element
-    return line_scores[floor(len(line_scores) / 2)]
+    return line_scores[len(line_scores) // 2]
 
 
 print(f"Day 10, part 1: {part_one()}")
