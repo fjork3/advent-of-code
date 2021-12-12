@@ -1,5 +1,5 @@
 def puzzle3():
-    with open("inputs/input3.txt", "r") as f:
+    with open("inputs/input03.txt", "r") as f:
         readings = list(map(lambda x: list(x)[:-1], f.readlines()))  # strip newline
     bit_values = list(map(list, zip(*readings)))
     most_common_bits = []

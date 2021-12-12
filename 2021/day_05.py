@@ -39,7 +39,7 @@ def puzzle5() -> int:
             covered_points.update(segment.covered_points())
         return covered_points
 
-    with open("inputs/input5.txt", "r") as f:
+    with open("inputs/input05.txt", "r") as f:
         line_segments = [LineSegment(line.rstrip()) for line in f]
 
     # part 1: orthogonal only

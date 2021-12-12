@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 
 from numpy import prod
 
-with open("inputs/input9.txt", "r") as f:
+with open("inputs/input09.txt", "r") as f:
     board: List[List[int]] = []
     for line in f.readlines():
         board.append([int(x) for x in line.rstrip()])

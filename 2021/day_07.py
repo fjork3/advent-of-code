@@ -1,6 +1,6 @@
 import math
 
-with open("inputs/input7.txt", "r") as f:
+with open("inputs/input07.txt", "r") as f:
     crabs = list(map(int, f.readline().split(",")))
 
 # part 1: minimal movement to horizontally align

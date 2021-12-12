@@ -1,5 +1,5 @@
 def puzzle1(windowsize: int) -> int:
-    with open("inputs/input1.txt", "r") as f:
+    with open("inputs/input01.txt", "r") as f:
         depths = f.readlines()
         depths = [int(x) for x in depths]
         diffs = [

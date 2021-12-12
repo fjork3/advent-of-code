@@ -12,7 +12,7 @@ def puzzle6():
         new_fish[6] += fish[0]
         return new_fish
 
-    with open("inputs/input6.txt", "r") as f:
+    with open("inputs/input06.txt", "r") as f:
         starting_timers = list(map(int, f.readline().split(",")))
 
     fish = Counter(starting_timers)

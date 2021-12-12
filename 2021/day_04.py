@@ -19,7 +19,7 @@ def puzzle4():
         for j, board in enumerate(bingo_boards):
             bingo_boards[j] = [[-1 if x == num else x for x in row] for row in board]
 
-    with open("inputs/input4.txt", "r") as f:
+    with open("inputs/input04.txt", "r") as f:
         called_numbers = map(int, f.readline().split(","))
         bingo_boards = []
         while f.readline():
