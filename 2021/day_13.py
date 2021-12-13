@@ -46,9 +46,9 @@ def part_two():
     max_x = max([point[0] for point in points])
     max_y = max([point[1] for point in points])
     output = []
-    for y in range(max_y+1):
+    for y in range(max_y + 1):
         output.append([])
-        for x in range(max_x+1):
+        for x in range(max_x + 1):
             output[y].append(" ")
 
     for x, y in points:

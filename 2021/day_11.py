@@ -4,8 +4,14 @@ from collections import defaultdict
 
 def read_input() -> Dict[Tuple[int, int], int]:
     with open("inputs/input11.txt", "r") as f:
-        board: List[List[int]] = [[int(x) for x in line.rstrip()] for line in f.readlines()]
-        return {(row, col): board[row][col] for row in range(len(board)) for col in range(len(board[0]))}
+        board: List[List[int]] = [
+            [int(x) for x in line.rstrip()] for line in f.readlines()
+        ]
+        return {
+            (row, col): board[row][col]
+            for row in range(len(board))
+            for col in range(len(board[0]))
+        }
 
 
 def coords_in_board(row: int, col: int):
@@ -17,7 +23,7 @@ def coords_in_board(row: int, col: int):
 def get_neighbors(row: int, col: int):
     return filter(
         lambda x: coords_in_board(*x),
-        [(row + x, col + y) for x in (-1, 0, 1) for y in (-1, 0, 1)]
+        [(row + x, col + y) for x in (-1, 0, 1) for y in (-1, 0, 1)],
     )
 
 

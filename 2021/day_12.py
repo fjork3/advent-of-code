@@ -78,7 +78,11 @@ def part_two():
         nodes_in_path = path.split(",")
         for neighbor in nodes[node].connections:
             # don't repeat more than one small node
-            if neighbor.name in nodes_in_path and not neighbor.is_large and repeat_taken:
+            if (
+                neighbor.name in nodes_in_path
+                and not neighbor.is_large
+                and repeat_taken
+            ):
                 continue
             # if not visited or large, visit as normal (keeping status about taken repeat)
             if neighbor.name not in nodes_in_path or neighbor.is_large:
