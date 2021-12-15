@@ -57,7 +57,7 @@ def part_two():
     counts = defaultdict(int)
     for pair in pair_counts:
         counts[pair[0]] += pair_counts[pair]
-    # final letter isn't part of any pairs (any never changes), account for that
+    # final letter isn't part of any pairs (and never changes), account for that
     counts[sequence[-1]] += 1
     print(counts)
 
