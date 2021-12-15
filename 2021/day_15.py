@@ -66,7 +66,8 @@ def run_a_star(nodes: Dict[Tuple[int, int], Node]) -> int:
 
     def next_node(unvisited: Set[Node]) -> Node:
         return min(
-            unvisited, key=lambda x: x.cumulative_risk + x.weight_heuristic(max_row, max_col)
+            unvisited,
+            key=lambda x: x.cumulative_risk + x.weight_heuristic(max_row, max_col),
         )
 
     while unvisited_nodes:
