@@ -2,34 +2,34 @@ from __future__ import annotations
 
 import math
 from typing import Dict, Set, Tuple
-
-# based on provided input
-MAX_ROW = 100
-MAX_COL = 100
+import numpy as np
 
 
-def read_input():
+def read_input() -> np.array:
     with open("inputs/input15.txt", "r") as f:
         board = [[int(c) for c in line.rstrip()] for line in f.readlines()]
 
-    return board
+    return np.asarray(board)
 
 
-def coords_in_board(row: int, col: int):
-    return 0 <= row < MAX_ROW and 0 <= col < MAX_COL
+def coords_in_board(row: int, col: int, max_rows: int, max_cols: int):
+    return 0 <= row < max_rows and 0 <= col < max_cols
 
 
-def get_neighbors(row: int, col: int):
+def get_neighbors(row: int, col: int, max_rows: int, max_cols: int):
     return filter(
-        lambda x: coords_in_board(*x),
+        lambda x: coords_in_board(*x, max_rows, max_cols),
         [(row, col - 1), (row, col + 1), (row - 1, col), (row + 1, col)],
     )
 
 
 # we gonna Dijkstra's it
+# just kidding, A*
 class Node:
-    def __init__(self, risk):
+    def __init__(self, row, col, risk):
         self.cumulative_risk = math.inf
+        self.row = row
+        self.col = col
         self.risk = risk
         self.is_end = False
         self.neighbors: Set[Node] = set()
@@ -37,66 +37,83 @@ class Node:
     def add_neighbor(self, neighbor: Node):
         self.neighbors.add(neighbor)
 
-    def visit_node(self, unvisited: Set[Node]):
-        if self.is_end:
-            return self.cumulative_risk
+    def visit_node(self, unvisited: Set[Node], visited: Set[Node]) -> None:
         for neighbor in self.neighbors:
-            if neighbor in unvisited:
-                neighbor.cumulative_risk = min(
-                    self.cumulative_risk + neighbor.risk, neighbor.cumulative_risk
-                )
+            if neighbor in visited:
+                continue
+            neighbor.cumulative_risk = min(
+                self.cumulative_risk + neighbor.risk, neighbor.cumulative_risk
+            )
+            unvisited.add(neighbor)
         unvisited.remove(self)
-        return None
+        visited.add(self)
 
-    def __repr__(self):
-        return f"Node: cumulative_risk: {self.cumulative_risk}, risk: {self.risk}, is_end: {self.is_end}, neighbors: {len(self.neighbors)}"
+    # slightly prefer exploring nodes further down and to the right
+    def weight_heuristic(self, rows, cols) -> int:
+        return self.cumulative_risk + (rows - self.row + cols - self.col)
 
 
-def next_node(unvisited: Set[Node]):
-    return min(unvisited, key=lambda x: x.cumulative_risk)
+def next_node(unvisited: Set[Node], rows: int, cols: int) -> Node:
+    return min(unvisited, key=lambda x: x.cumulative_risk + x.weight_heuristic(rows, cols))
 
 
 def part_one():
     board = read_input()
     all_nodes: Dict[Tuple[int, int], Node] = {}
-    for row in range(len(board)):
-        for col in range(len(board[0])):
-            all_nodes[row, col] = Node(board[row][col])
+
+    # initialize empty nodes and mark start/end
+    for row, col in np.ndindex(board.shape):
+        all_nodes[row, col] = Node(row, col, board[row][col])
     all_nodes[0, 0].cumulative_risk = 0
-    all_nodes[MAX_ROW-1, MAX_COL-1].is_end = True
+    all_nodes[99, 99].is_end = True
 
-    for row in range(len(board)):
-        for col in range(len(board[0])):
-            for n_row, n_col in get_neighbors(row, col):
-                all_nodes[row, col].add_neighbor(all_nodes[n_row, n_col])
+    # add neighbors
+    for row, col in np.ndindex(board.shape):
+        for n_row, n_col in get_neighbors(row, col, 100, 100):
+            all_nodes[row, col].add_neighbor(all_nodes[n_row, n_col])
 
-    unvisited_nodes: Set[Node] = set(all_nodes.values())
+    unvisited_nodes: Set[Node] = set()
+    visited_nodes: Set[Node] = set()
+    unvisited_nodes.add(all_nodes[0, 0])
     while unvisited_nodes:
-        n = next_node(unvisited_nodes)
-        if n.visit_node(unvisited_nodes) is not None:
+        n = next_node(unvisited_nodes, 100, 100)
+        if n.is_end:
             return n.cumulative_risk
+        n.visit_node(unvisited_nodes, visited_nodes)
 
 
 # input is actually tiled 5x in each direction; 1 tile left or right adds 1 risk, wrapping mod 9
 def part_two():
-    board = read_input()
+    base_board = read_input()
     all_nodes: Dict[Tuple[int, int], Node] = {}
-    for row in range(len(board)):
-        for col in range(len(board[0])):
-            for tile_x in range(5):
-                for tile_y in range(5):
-                    base_risk = board[row][col]
-                    risk = (base_risk + tile_x + tile_y) % 9
-                    if risk == 0:
-                        risk = 9
-                    all_nodes[row + MAX_ROW*tile_y, col + MAX_COL*tile_x] = Node(risk)
+
+    # tile out duplicated board, with offset based on tiling
+    board = np.empty((500, 500), np.int32)
+    for tile_y in range(0, 5):
+        for tile_x in range(0, 5):
+            new_tile: np.array = base_board + tile_x + tile_y
+            new_tile = ((new_tile - 1) % 9) + 1
+            board[100*tile_y:100*(tile_y+1), 100*tile_x:100*(tile_x+1)] = new_tile
+
+    # initialize empty nodes and mark start/end
+    for row, col in np.ndindex(board.shape):
+        all_nodes[row, col] = Node(row, col, board[row][col])
     all_nodes[0, 0].cumulative_risk = 0
     all_nodes[499, 499].is_end = True
-    unvisited_nodes: Set[Node] = set(all_nodes.values())
+
+    # add neighbors
+    for row, col in np.ndindex(board.shape):
+        for n_row, n_col in get_neighbors(row, col, 500, 500):
+            all_nodes[row, col].add_neighbor(all_nodes[n_row, n_col])
+
+    unvisited_nodes: Set[Node] = set()
+    visited_nodes: Set[Node] = set()
+    unvisited_nodes.add(all_nodes[0, 0])
     while unvisited_nodes:
-        n = next_node(unvisited_nodes)
-        if n.visit_node(unvisited_nodes) is not None:
+        n = next_node(unvisited_nodes, 500, 500)
+        if n.is_end:
             return n.cumulative_risk
+        n.visit_node(unvisited_nodes, visited_nodes)
 
 
 print(f"Day 15, part 1: {part_one()}")
