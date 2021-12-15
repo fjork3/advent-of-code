@@ -1,5 +1,5 @@
-from typing import List, Tuple, Dict
 from collections import defaultdict
+from typing import Dict, List, Tuple
 
 
 def read_input() -> Dict[Tuple[int, int], int]:

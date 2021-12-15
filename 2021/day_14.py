@@ -1,5 +1,6 @@
-from typing import Dict, Tuple
 from collections import Counter, defaultdict
+from typing import Dict, Tuple
+
 
 def read_input() -> Tuple[str, Dict]:
     with open("inputs/input14.txt", "r") as f:
@@ -16,10 +17,13 @@ def step(sequence: str, insertions: Dict):
     output = ""
     for i in range(len(sequence)):
         output += sequence[i]
-        output += insertions[sequence[i:i+2]] # will insert empty string if not in listed pairs
+        output += insertions[
+            sequence[i : i + 2]
+        ]  # will insert empty string if not in listed pairs
     # DEBUG
     print(f"step complete! new polymer size: {len(output)}")
     return output
+
 
 def part_one():
     sequence, insertions = read_input()
