@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from typing import Dict, Set, Tuple
+
 import numpy as np
 
 
@@ -12,7 +13,7 @@ def read_input() -> np.array:
     return np.asarray(board)
 
 
-def coords_in_board(row: int, col: int, max_rows: int, max_cols: int):
+def coords_in_board(row: int, col: int, max_rows: int, max_cols: int) -> bool:
     return 0 <= row < max_rows and 0 <= col < max_cols
 
 
@@ -48,16 +49,34 @@ class Node:
         unvisited.remove(self)
         visited.add(self)
 
-    # slightly prefer exploring nodes further down and to the right
+    # tightest guaranteed lower bound on cost from current spot to end
     def weight_heuristic(self, rows, cols) -> int:
         return self.cumulative_risk + (rows - self.row + cols - self.col)
 
 
-def next_node(unvisited: Set[Node], rows: int, cols: int) -> Node:
-    return min(unvisited, key=lambda x: x.cumulative_risk + x.weight_heuristic(rows, cols))
+# Run A* algorithm, with start and end nodes pre-marked
+def run_a_star(nodes: Dict[Tuple[int, int], Node]) -> int:
+    # for speed of finding next node, we only want to consider nodes with a non-infinite weight when possible
+    unvisited_nodes: Set[Node] = set()
+    visited_nodes: Set[Node] = set()
+    unvisited_nodes.add(nodes[0, 0])
+
+    max_row = max(nodes.keys(), key=lambda x: x[1])[1]
+    max_col = max(nodes.keys(), key=lambda x: x[0])[0]
+
+    def next_node(unvisited: Set[Node]) -> Node:
+        return min(
+            unvisited, key=lambda x: x.cumulative_risk + x.weight_heuristic(max_row, max_col)
+        )
+
+    while unvisited_nodes:
+        n = next_node(unvisited_nodes)
+        if n.is_end:
+            return int(n.cumulative_risk)
+        n.visit_node(unvisited_nodes, visited_nodes)
 
 
-def part_one():
+def part_one() -> int:
     board = read_input()
     all_nodes: Dict[Tuple[int, int], Node] = {}
 
@@ -72,28 +91,23 @@ def part_one():
         for n_row, n_col in get_neighbors(row, col, 100, 100):
             all_nodes[row, col].add_neighbor(all_nodes[n_row, n_col])
 
-    unvisited_nodes: Set[Node] = set()
-    visited_nodes: Set[Node] = set()
-    unvisited_nodes.add(all_nodes[0, 0])
-    while unvisited_nodes:
-        n = next_node(unvisited_nodes, 100, 100)
-        if n.is_end:
-            return n.cumulative_risk
-        n.visit_node(unvisited_nodes, visited_nodes)
+    return run_a_star(all_nodes)
 
 
 # input is actually tiled 5x in each direction; 1 tile left or right adds 1 risk, wrapping mod 9
-def part_two():
+def part_two() -> int:
     base_board = read_input()
     all_nodes: Dict[Tuple[int, int], Node] = {}
 
     # tile out duplicated board, with offset based on tiling
-    board = np.empty((500, 500), np.int32)
+    board = np.empty((500, 500), np.int8)
     for tile_y in range(0, 5):
         for tile_x in range(0, 5):
             new_tile: np.array = base_board + tile_x + tile_y
             new_tile = ((new_tile - 1) % 9) + 1
-            board[100*tile_y:100*(tile_y+1), 100*tile_x:100*(tile_x+1)] = new_tile
+            board[
+                100 * tile_y : 100 * (tile_y + 1), 100 * tile_x : 100 * (tile_x + 1)
+            ] = new_tile
 
     # initialize empty nodes and mark start/end
     for row, col in np.ndindex(board.shape):
@@ -106,14 +120,7 @@ def part_two():
         for n_row, n_col in get_neighbors(row, col, 500, 500):
             all_nodes[row, col].add_neighbor(all_nodes[n_row, n_col])
 
-    unvisited_nodes: Set[Node] = set()
-    visited_nodes: Set[Node] = set()
-    unvisited_nodes.add(all_nodes[0, 0])
-    while unvisited_nodes:
-        n = next_node(unvisited_nodes, 500, 500)
-        if n.is_end:
-            return n.cumulative_risk
-        n.visit_node(unvisited_nodes, visited_nodes)
+    return run_a_star(all_nodes)
 
 
 print(f"Day 15, part 1: {part_one()}")
