@@ -2,7 +2,7 @@ DAY_NUMBER = 1
 
 
 def read_input():
-    with open(f"inputs/input{DAY_NUMBER}.txt", "r") as f:
+    with open(f"inputs/input{DAY_NUMBER:0>2}.txt", "r") as f:
         pass
     return
 
