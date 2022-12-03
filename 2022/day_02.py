@@ -11,28 +11,21 @@ def read_input():
             my_plays.append(throws[1])
     return op_plays, my_plays
 
-score_map = {
-    "rock": 1,
-    "paper": 2,
-    "scissors": 3
-}
 
-win_map = {
-    "rock": "scissors",
-    "paper": "rock",
-    "scissors": "paper"
-}
+ROCK = 1
+PAPER = 2
+SCISSORS = 3
 
 op_plays_decode = {
-    "A": "rock",
-    "B": "paper",
-    "C": "scissors"
+    "A": ROCK,
+    "B": PAPER,
+    "C": SCISSORS
 }
 
 my_plays_decode = {
-    "X": "rock",
-    "Y": "paper",
-    "Z": "scissors"
+    "X": ROCK,
+    "Y": PAPER,
+    "Z": SCISSORS
 }
 
 results_decode = {
@@ -42,21 +35,29 @@ results_decode = {
 }
 
 
-def round_score(op_play: str, my_play: str) -> int:
-    if op_play == my_play:
-        return 3 + score_map[my_play]
-    if op_play == win_map[my_play]:
-        return 6 + score_map[my_play]
-    return score_map[my_play]
+# constrain to range 1-3
+def bound_result(result: int) -> int:
+    return ((result-1) % 3) + 1
+
+
+def round_score(op_play: int, my_play: int) -> int:
+    score = my_play
+    if my_play == op_play:
+        score += 3
+    elif (my_play - op_play) % 3 == 1:
+        score += 6
+    return score
 
 
 # X for lose, Y for draw, Z for win
-def round_score_result(op_play: str, result: str) -> int:
-    if result == "draw":
-        return 3 + score_map[op_play]
+def round_score_result(op_play: int, result: str) -> int:
+    my_play = op_play
     if result == "win":
-        return 6 + 1 + ((score_map[op_play] + 1) % 3)
-    return 1 + ((score_map[op_play] - 1) % 3)
+        my_play = bound_result(op_play + 1)
+    elif result == "loss":
+        my_play = bound_result(op_play - 1)
+
+    return round_score(op_play, my_play)
 
 
 def part_one():
