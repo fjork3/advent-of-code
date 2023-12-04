@@ -42,8 +42,7 @@ def part_two():
     total = 0
 
     for d in data:
-        digits = re.compile(r'\d|one|two|three|four|five|six|seven|eight|nine').findall(d)
-        print(digits)
+        digits = re.compile(r'(?=(\d|one|two|three|four|five|six|seven|eight|nine))').findall(d)
         total += int(f'{str_to_digit(digits[0])}{str_to_digit(digits[-1])}')
     return total
 
