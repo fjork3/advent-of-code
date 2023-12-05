@@ -21,6 +21,7 @@ class CubeGame:
     def power(self) -> int:
         return prod(list(self.min_cubes().values()))
 
+
 def read_input():
     games: List[CubeGame] = []
     with open(f"inputs/input{DAY_NUMBER:0>2}.txt", "r") as f:
